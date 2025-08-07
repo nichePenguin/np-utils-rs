@@ -31,10 +31,12 @@ pub fn log_line(
     Ok(())
 }
 
-pub fn file_watch(
+pub fn file_watch<F>(
     path: PathBuf,
     period_ms: u64,
-    handler: Box<dyn Fn(String) + Sync + Send>) -> tokio::task::JoinHandle<()>
+    handler: F) -> tokio::task::JoinHandle<()>
+where
+    F: Fn(String) + Send + Sync + 'static
 {
     let mut last_hash = String::new(); 
     tokio::spawn(async move { loop {
